@@ -1,0 +1,28 @@
+name: Windows CMake Build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Visual Studio Build Environment
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      run: cmake ${{github.workspace}} -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=MinSizeRel
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config MinSizeRel
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: g915_digital_rain
+        path: ${{github.workspace}}/build/MinSizeRel/g915_digital_rain.exe
